@@ -1,11 +1,38 @@
 {% extends 'base.html' %}
 
+{% block js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('select').material_select();
+        });
+    </script>
+
+{% endblock %}
+
 
 {% block content %}
     <form method="post">
         {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Submit"/>
+        {{ form.non_field_errors }}
+        <div class="input-field">
+            {{ form.username.errors }}
+            {{ form.username }}
+            <label for="{{ form.username.id_for_label }}">Username:</label>
+        </div>
+        <div class="input-field">
+            {{ form.password.errors }}
+            {{ form.password }}
+            <label for="{{ form.password.id_for_label }}">Password:</label>
+        </div>
+        <div class="input-field">
+            {{ form.room_no.errors }}
+            {{ form.room_no }}
+            <label for="{{ form.room_no.id_for_label }}">Room No.:</label>
+        </div>
+        <button class="btn waves-effect waves-light blue" type="submit"
+                name="action">Submit
+            <i class="material-icons right">send</i>
+        </button>
     </form>
 
 {% endblock %}
