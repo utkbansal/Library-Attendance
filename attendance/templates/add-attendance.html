@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/add-attendance.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col m6 " id="attendance-form-div">
+            <form method="post" id="attendance-form">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="row">
+                        <div class="input-field col m12">
+                            {{ field.errors }}{{ field }}
+                            {{ field.label_tag }}
+                        </div>
+                    </div>
+                {% endfor %}
+                <button class="btn waves-effect waves-light blue" type="submit"
+                        name="action">Submit
+                    <i class="material-icons right">send</i>
+                </button>
+            </form>
+        </div>
+
+        <div class="col m6">
+
+
+            {% for student in students %}
+                <div class="card-panel blue">
+                    <span class="white-text">{{ student.student_number }}</span>
+                </div>
+            {% endfor %}
+
+
+        </div>
+    </div>
+{% endblock %}
