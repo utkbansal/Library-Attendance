@@ -92,7 +92,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -112,3 +112,4 @@ TEMPLATE_DIRS = (
 
 # LOGIN_REDIRECT_URL = '/add-attendance/'
 # LOGIN_URL = '/login/'
+

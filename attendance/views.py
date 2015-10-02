@@ -1,7 +1,7 @@
-from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.views.generic import FormView, RedirectView
+
 from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
 
 from .forms import LoginForm, AttendanceForm
@@ -15,9 +15,11 @@ class AttendanceView(FormView):
 
     def form_valid(self, form):
         student_number = form.cleaned_data['student_number']
+        # If student is in library do an exit
         if Attendance.student_in_library(student_number):
             Attendance.exit(student_number)
             return redirect(self.success_url)
+        # If student not already in the library do a new entry
         Attendance.entry(student_number, self.request.session['room'])
         return redirect(self.success_url)
 
@@ -34,9 +36,9 @@ class LoginView(AnonymousRequiredMixin, FormView):
 
     def form_valid(self, form):
         room_id = Room.objects.get(name=form.cleaned_data['room_no']).id
+        # Add the room id of the user to the session
         self.request.session['room'] = room_id
-        print room_id
-        return HttpResponseRedirect(self.success_url)
+        return redirect(self.success_url)
 
 
 class LogoutView(LoginRequiredMixin, RedirectView):

@@ -15,13 +15,21 @@ class Attendance(models.Model):
     entry_time = models.DateTimeField()
     exit_time = models.DateTimeField(null=True, default=None)
     student_number = models.CharField(max_length=255)
-
+    
     @staticmethod
     def students_in_library():
+        """
+        :return: a list of students currently in the library
+        """
         return Attendance.objects.filter(exit_time=None)
 
     @staticmethod
     def student_in_library(student_number):
+        """
+        :param student_number: student_number to be checked
+        :return: True or False depending wether the student is currently in the
+        library or not
+        """
         students = Attendance.students_in_library()
         for s in students:
             if s.student_number == student_number:
@@ -30,6 +38,12 @@ class Attendance(models.Model):
 
     @staticmethod
     def entry(student_number, room):
+        """
+
+        :param student_number: student_number to be entered
+        :param room: id of the room in which entry has to be made
+        :return: Nothing, just does the entry for the given student number
+        """
         room = Room.objects.get(id=room)
         obj = Attendance(
             student_number=student_number,
@@ -40,6 +54,11 @@ class Attendance(models.Model):
 
     @staticmethod
     def exit(student_number):
+        """
+
+        :param student_number: student_number to be exited
+        :return: Nothing, just exits the student
+        """
         Attendance.objects.filter(
             student_number=student_number,
             exit_time=None
