@@ -11,7 +11,8 @@
 
 
 {% block content %}
-    <form method="post">
+    <div class="card-panel hoverable">
+    <form method="post" >
         {% csrf_token %}
         {{ form.non_field_errors }}
         <div class="input-field">
@@ -34,5 +35,6 @@
             <i class="material-icons right">send</i>
         </button>
     </form>
+    </div>
 
 {% endblock %}
