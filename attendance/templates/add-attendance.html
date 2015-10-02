@@ -5,9 +5,10 @@
     <link rel="stylesheet" href="{% static 'css/add-attendance.css' %}">
 {% endblock %}
 
+
 {% block content %}
     <div class="row">
-        <div class="col m6 " id="attendance-form-div">
+        <div class="col m5 card-panel hoverable" id="attendance-form-div">
             <form method="post" id="attendance-form">
                 {% csrf_token %}
                 {% for field in form %}
@@ -25,12 +26,14 @@
             </form>
         </div>
 
-        <div class="col m6">
+        <div class="col m4 offset-m1 student-numbers">
 
 
             {% for student in students %}
-                <div class="card-panel blue">
-                    <span class="white-text">{{ student.student_number }}</span>
+                <div class="card-panel hoverable">
+                    <i class="material-icons left">perm_identity</i>
+                    <span class="blue-text">{{ student.student_number }} </span>
+                    <span class="grey-text">{{ student.entry_time|time }} </span>
                 </div>
             {% endfor %}
 

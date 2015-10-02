@@ -1,4 +1,26 @@
-#attendance-form-div{
-    padding-top: 10%;
+#attendance-form-div {
+    margin-top: 15%;
+    padding: 5%;
+    height: 40%;
+    /*margin-right: 5%;*/
     /*margin-top: 200px;!important;*/
 }
+
+.student-numbers {
+    margin-top: 4%;
+    height: 80%;
+    overflow: auto;
+}
+
+.brand-logo {
+    margin-left: 2%;
+}
+
+::-webkit-scrollbar {
+    width: 0;
+}
+
+.grey-text{
+    float: right;
+}
+
