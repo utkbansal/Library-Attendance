@@ -12,10 +12,6 @@
     overflow: auto;
 }
 
-.brand-logo {
-    margin-left: 2%;
-}
-
 ::-webkit-scrollbar {
     width: 0;
 }
