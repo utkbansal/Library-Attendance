@@ -3,11 +3,11 @@ from .models import Attendance
 from django.utils import timezone
 
 
-def report(year, month):
+def report(year, month, output=None):
 
     # for headders
     date_now = timezone.datetime(year, month, 1)
-    workbook = xlsxwriter.Workbook('Library.xlsx')
+    workbook = xlsxwriter.Workbook(output)
     worksheet = workbook.add_worksheet()
     format = workbook.add_format()
     format.set_align('center')
@@ -101,5 +101,6 @@ def report(year, month):
                 worksheet.write(10 + day, j, ls[j-3], format)
 
     workbook.close()
+    return workbook
 
 
