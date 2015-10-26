@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="report-buttons">
+        <a class="waves-effect waves-light btn-large blue"><i
+                class="material-icons left">assignment</i>Report 1</a>
+        <a class="waves-effect waves-light btn-large blue"><i
+                class="material-icons left">assignment</i>Report 2</a>
+    </div>
+
+    <div class="report-form">
+
+    </div>
+{% endblock %}
