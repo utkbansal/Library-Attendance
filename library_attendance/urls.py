@@ -19,4 +19,5 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^god-panel/', include(admin.site.urls)),
     url(r'', include('attendance.urls')),
+    url(r'^admin/', include('report.urls'))
 ]
