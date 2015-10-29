@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'attendance',
+    'report',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -112,4 +113,5 @@ TEMPLATE_DIRS = (
 
 # LOGIN_REDIRECT_URL = '/add-attendance/'
 # LOGIN_URL = '/login/'
+
 
