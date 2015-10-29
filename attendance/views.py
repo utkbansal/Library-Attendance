@@ -1,7 +1,7 @@
-from django.contrib.auth import logout
+from django.contrib.auth import logout, authenticate, login
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.views.generic import FormView, RedirectView
-
 from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
 
 from .forms import LoginForm, AttendanceForm
@@ -38,7 +38,15 @@ class LoginView(AnonymousRequiredMixin, FormView):
         room_id = Room.objects.get(name=form.cleaned_data['room_no']).id
         # Add the room id of the user to the session
         self.request.session['room'] = room_id
-        return redirect(self.success_url)
+        username = form.cleaned_data['username']
+        password = form.cleaned_data['password']
+        user = authenticate(username=username, password=password)
+
+        if user is not None and user.is_active:
+            login(self.request, user)
+            return HttpResponseRedirect(self.success_url)
+        else:
+            return self.form_invalid(form)
 
 
 class LogoutView(LoginRequiredMixin, RedirectView):
