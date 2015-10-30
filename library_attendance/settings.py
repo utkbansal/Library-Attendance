@@ -111,7 +111,7 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )
 
-# LOGIN_REDIRECT_URL = '/add-attendance/'
-# LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/login/'
 
 

@@ -32,7 +32,7 @@ class AttendanceView(FormView):
 class LoginView(AnonymousRequiredMixin, FormView):
     form_class = LoginForm
     template_name = 'login.html'
-    success_url = '/add-attendance'
+    success_url = '/'
 
     def form_valid(self, form):
         room_id = Room.objects.get(name=form.cleaned_data['room_no']).id
