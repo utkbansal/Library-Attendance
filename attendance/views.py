@@ -1,6 +1,7 @@
 from django.contrib.auth import logout, authenticate, login
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
+from django.core.urlresolvers import reverse_lazy
 from django.views.generic import FormView, RedirectView
 from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
 
@@ -8,7 +9,7 @@ from .forms import LoginForm, AttendanceForm
 from .models import Room, Attendance
 
 
-class AttendanceView(FormView):
+class AttendanceView(LoginRequiredMixin, FormView):
     form_class = AttendanceForm
     template_name = 'add-attendance.html'
     success_url = '/add-attendance'
@@ -52,4 +53,4 @@ class LoginView(AnonymousRequiredMixin, FormView):
 class LogoutView(LoginRequiredMixin, RedirectView):
     def get(self, request, *args, **kwargs):
         logout(request)
-        return super(LogoutView, self).get(request, *args, **kwargs)
+        return redirect(reverse_lazy('login'))
