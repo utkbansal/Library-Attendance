@@ -12,7 +12,7 @@ from .models import Room, Attendance
 class AttendanceView(LoginRequiredMixin, FormView):
     form_class = AttendanceForm
     template_name = 'add-attendance.html'
-    success_url = '/add-attendance'
+    success_url = '/'
 
     def form_valid(self, form):
         student_number = form.cleaned_data['student_number']
