@@ -12,7 +12,7 @@ from .models import Room, Attendance
 class AttendanceView(LoginRequiredMixin, FormView):
     form_class = AttendanceForm
     template_name = 'add-attendance.html'
-    success_url = '/'
+    success_url = reverse_lazy('attendance')
 
     def form_valid(self, form):
         student_number = form.cleaned_data['student_number']
@@ -33,7 +33,7 @@ class AttendanceView(LoginRequiredMixin, FormView):
 class LoginView(AnonymousRequiredMixin, FormView):
     form_class = LoginForm
     template_name = 'login.html'
-    success_url = '/'
+    success_url = reverse_lazy('attendance')
 
     def form_valid(self, form):
         room_id = Room.objects.get(name=form.cleaned_data['room_no']).id
