@@ -16,6 +16,6 @@ months = [
 ]
 
 
-class MonthlyReportForm(forms.Form):
+class ReportForm(forms.Form):
     year = forms.IntegerField()
     month = forms.ChoiceField(choices=months)

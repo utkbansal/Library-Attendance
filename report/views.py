@@ -8,7 +8,7 @@ from braces.views import GroupRequiredMixin
 
 from attendance.models import Room
 from attendance.forms import LoginForm
-from .forms import MonthlyReportForm
+from .forms import ReportForm
 from report.excel import report
 
 
@@ -48,7 +48,7 @@ class AdminView(FormView):
 
 
 class MonthlyReportFormView(GroupRequiredMixin, FormView):
-    form_class = MonthlyReportForm
+    form_class = ReportForm
     template_name = 'report/monthly-report.html'
     group_required = 'Generate Report'
 
@@ -67,4 +67,6 @@ class MonthlyReportFormView(GroupRequiredMixin, FormView):
 
 
 class TrueReaderFormView(GroupRequiredMixin, FormView):
-    pass
+    form_class = ReportForm
+    template_name = 'report/true-reader.html'
+    group_required = 'Generate Report'
