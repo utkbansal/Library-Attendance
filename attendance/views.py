@@ -3,10 +3,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import FormView, RedirectView
+from django.http import HttpResponse
 from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
 
-from .forms import LoginForm, AttendanceForm
+from .forms import LoginForm, AttendanceForm, ExcelForm
 from .models import Room, Attendance
+from .excel import report
 
 
 class AttendanceView(LoginRequiredMixin, FormView):
@@ -54,3 +56,27 @@ class LogoutView(LoginRequiredMixin, RedirectView):
     def get(self, request, *args, **kwargs):
         logout(request)
         return redirect(reverse_lazy('login'))
+
+
+class ExcelView(FormView):
+    form_class = ExcelForm
+    template_name = 'excel.html'
+    success_url = '/excel'
+
+    def form_valid(self, form):
+        year = int(form.cleaned_data['year'])
+        month = int(form.cleaned_data['month'])
+
+        try:
+            import cStringIO as StringIO
+        except ImportError:
+            from io import BytesIO
+
+        output = BytesIO()
+        report(year=year, month=month, output=output)
+        output.seek(0)
+        response = HttpResponse(output.read(),
+                                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response[
+            'Content-Disposition'] = "attachment; filename=Library_report.xlsx"
+        return response
