@@ -9,9 +9,8 @@ from django.http import HttpResponse
 
 from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
 
-from .forms import LoginForm, AttendanceForm, ExcelForm
+from .forms import LoginForm, AttendanceForm
 from .models import Room, Attendance
-from .excel import report
 
 
 class AttendanceView(LoginRequiredMixin, FormView):
