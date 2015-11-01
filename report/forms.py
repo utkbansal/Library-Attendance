@@ -16,6 +16,6 @@ months = [
 ]
 
 
-class ExcelForm(forms.Form):
+class MonthlyReportForm(forms.Form):
     year = forms.IntegerField()
     month = forms.ChoiceField(choices=months)

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('select').material_select();
+        });
+    </script>
+
+{% endblock %}
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+
+        <button class="btn waves-effect waves-light blue"
+                type="submit"
+                name="action">Submit
+            <i class="material-icons right">send</i>
+        </button>
+    </form>
+{% endblock %}

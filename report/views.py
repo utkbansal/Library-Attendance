@@ -1,10 +1,15 @@
+from io import BytesIO
+
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import Group
 from django.views.generic import FormView
+from braces.views import GroupRequiredMixin
 
 from attendance.models import Room
 from attendance.forms import LoginForm
+from .forms import MonthlyReportForm
+from report.excel import report
 
 
 class AdminView(FormView):
@@ -42,9 +47,24 @@ class AdminView(FormView):
             return self.form_invalid(form)
 
 
-class MonthlyReportFormView(FormView):
-    pass
+class MonthlyReportFormView(GroupRequiredMixin, FormView):
+    form_class = MonthlyReportForm
+    template_name = 'report/monthly-report.html'
+    group_required = 'Generate Report'
+
+    def form_valid(self, form):
+        year = int(form.cleaned_data['year'])
+        month = int(form.cleaned_data['month'])
+
+        output = BytesIO()
+        report(year=year, month=month, output=output)
+        output.seek(0)
+        response = HttpResponse(output.read(),
+                                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response[
+            'Content-Disposition'] = "attachment; filename=Library_report.xlsx"
+        return response
 
 
-class TrueReaderFormView(FormView):
+class TrueReaderFormView(GroupRequiredMixin, FormView):
     pass
