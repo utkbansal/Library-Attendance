@@ -1,15 +1,13 @@
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import Group
-
 from django.views.generic import FormView
 
 from attendance.models import Room
-
 from attendance.forms import LoginForm
 
 
-class AdminTestView(FormView):
+class AdminView(FormView):
     group_required = 'Generate Report'
     template_name = 'report/admin.html'
     success_url = '/admin'
@@ -19,7 +17,7 @@ class AdminTestView(FormView):
         form = LoginForm()
         grp = Group.objects.get(name='Generate Report')
 
-        context = super(AdminTestView, self).get_context_data(**kwargs)
+        context = super(AdminView, self).get_context_data(**kwargs)
         context['form'] = form
 
         if grp not in request.user.groups.all():
@@ -42,3 +40,11 @@ class AdminTestView(FormView):
             return HttpResponseRedirect(self.success_url)
         else:
             return self.form_invalid(form)
+
+
+class MonthlyReportFormView(FormView):
+    pass
+
+
+class TrueReaderFormView(FormView):
+    pass

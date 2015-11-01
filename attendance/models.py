@@ -15,7 +15,7 @@ class Attendance(models.Model):
     entry_time = models.DateTimeField()
     exit_time = models.DateTimeField(null=True, default=None)
     student_number = models.CharField(max_length=255)
-    
+
     @staticmethod
     def students_in_library():
         """

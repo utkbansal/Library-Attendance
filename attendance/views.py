@@ -60,20 +60,20 @@ class LogoutView(LoginRequiredMixin, RedirectView):
         return redirect(reverse_lazy('login'))
 
 
-class ExcelView(FormView):
-    form_class = ExcelForm
-    template_name = 'excel.html'
-    success_url = '/excel'
-
-    def form_valid(self, form):
-        year = int(form.cleaned_data['year'])
-        month = int(form.cleaned_data['month'])
-
-        output = BytesIO()
-        report(year=year, month=month, output=output)
-        output.seek(0)
-        response = HttpResponse(output.read(),
-                                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-        response[
-            'Content-Disposition'] = "attachment; filename=Library_report.xlsx"
-        return response
+# class ExcelView(FormView):
+#     form_class = ExcelForm
+#     template_name = 'excel.html'
+#     success_url = '/excel'
+#
+#     def form_valid(self, form):
+#         year = int(form.cleaned_data['year'])
+#         month = int(form.cleaned_data['month'])
+#
+#         output = BytesIO()
+#         report(year=year, month=month, output=output)
+#         output.seek(0)
+#         response = HttpResponse(output.read(),
+#                                 content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+#         response[
+#             'Content-Disposition'] = "attachment; filename=Library_report.xlsx"
+#         return response

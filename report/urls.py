@@ -1,8 +1,12 @@
 from django.conf.urls import url
 
 
-from .views import AdminTestView
+from .views import AdminView, MonthlyReportFormView, TrueReaderFormView
 
 urlpatterns = [
-    url(r'^', AdminTestView.as_view(), name='report-admin')
+    url(r'^', AdminView.as_view(), name='report-admin'),
+    url(r'^monthly-report/$', MonthlyReportFormView.as_view(), name='monthly-report'),
+    url(r'^true-reader-report/$', TrueReaderFormView.as_view(), name='true-reader-report'),
+
+
 ]

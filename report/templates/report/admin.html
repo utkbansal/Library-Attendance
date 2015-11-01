@@ -18,10 +18,12 @@
 
     {% if login %}
         <div class="report-buttons">
-            <a class="waves-effect waves-light btn-large blue"><i
-                    class="material-icons left">assignment</i>Report 1</a>
-            <a class="waves-effect waves-light btn-large blue"><i
-                    class="material-icons left">assignment</i>Report 2</a>
+            <a class="waves-effect waves-light btn-large blue"
+               href="{% url 'monthly-report' %}"><i
+                    class="material-icons left">assignment</i>Monthly Report</a>
+            <a class="waves-effect waves-light btn-large blue"
+               href="{% url 'true-reader-report' %}"><i
+                    class="material-icons left">assignment</i>True Reader Award</a>
         </div>
 
     {% else %}
