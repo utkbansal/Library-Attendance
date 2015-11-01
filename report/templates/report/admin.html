@@ -17,19 +17,45 @@
 {% block content %}
 
     {% if login %}
-        <div class="report-buttons">
-            <a class="waves-effect waves-light btn-large blue"
-               href="{% url 'monthly-report' %}"><i
-                    class="material-icons left">assignment</i>Monthly Report</a>
-            <a class="waves-effect waves-light btn-large blue"
-               href="{% url 'true-reader-report' %}"><i
-                    class="material-icons left">assignment</i>True Reader Award</a>
+
+        <div class="paddingFix">
+            <div class="row">
+                <div class="valign">
+                    <div class="card col m5">
+                        <div class="card-content">
+                            {% lorem 1 p %}
+                        </div>
+                        <div class=" card-action">
+                            <a href="{% url 'monthly-report' %}">
+                                <i class="material-icons left">assignment</i>Monthly
+                                Report</a></div>
+                    </div>
+
+                    <div class="card col m5 offset-m2">
+                        <div class="card-content">
+                            {% lorem 1 p %}
+                        </div>
+                        <div class="card-action">
+                            <a href="{% url 'true-reader-report' %}">
+                                <i class="material-icons left">assignment</i>True
+                                Reader
+                                Award</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     {% else %}
+        {##}
+        {#        <div class="card-panel">#}
+        <div class="userType">Welcome Admin!
+            <p>Please Login with your username and password</p>
+        </div>
 
         <div class="report-form">
-            <div class="card-panel hoverable col m8 offset-m2 " id="login-form">
+            <div class="card-panel hoverable col m8 offset-m2 "
+                 id="login-form">
                 <form method="post">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
@@ -57,5 +83,6 @@
                 </form>
             </div>
         </div>
+        {#        </div>#}
     {% endif %}
 {% endblock %}
