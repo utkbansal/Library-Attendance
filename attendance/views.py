@@ -1,9 +1,12 @@
+from io import BytesIO
+
 from django.contrib.auth import logout, authenticate, login
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import FormView, RedirectView
 from django.http import HttpResponse
+
 from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
 
 from .forms import LoginForm, AttendanceForm, ExcelForm
@@ -66,11 +69,6 @@ class ExcelView(FormView):
     def form_valid(self, form):
         year = int(form.cleaned_data['year'])
         month = int(form.cleaned_data['month'])
-
-        try:
-            import cStringIO as StringIO
-        except ImportError:
-            from io import BytesIO
 
         output = BytesIO()
         report(year=year, month=month, output=output)
