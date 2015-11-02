@@ -1,3 +1,21 @@
 .brand-logo {
     margin-left: 2%;
 }
+
+footer{
+    position:absolute;
+    background-color: transparent;
+    border-top:1px solid #d6d6d6;
+    bottom:0;
+    padding:5px;
+    color: #727272;
+    text-align: center;
+    width: 100%;
+    font-size:12px;
+    font-weight: bold;
+}
+
+footer>span{
+    color: #1976d2;
+}
+

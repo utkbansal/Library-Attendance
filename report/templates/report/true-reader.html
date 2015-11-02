@@ -11,19 +11,21 @@
 {% block content %}
     <div class="row">
 
-    <div class="col m6 offset-m3">
-    <div class="card-panel ">
+        <div class="col m6 offset-m3">
+            <div class="card-panel ">
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form }}
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form }}
 
-        <button class="btn waves-effect waves-light blue"
-                type="submit"
-                name="action">Submit
-            <i class="material-icons right">send</i>
-        </button>
-    </form>
-    </div></div>    </div>
+                    <button class="btn waves-effect waves-light blue"
+                            type="submit"
+                            name="action">Submit
+                        <i class="material-icons right">send</i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
