@@ -16,5 +16,3 @@ class LoginForm(AuthenticationForm):
         super(LoginForm, self).__init__(*args, **kwargs)
         self.fields['room_no'] = forms.ModelChoiceField(
             queryset=Room.objects.all().order_by('name'))
-
-
