@@ -1,0 +1,16 @@
+Library Attendance
+==================
+
+
+Setup and Config
+
+You will need to add a group named 'Generate Report'. This name should be exact 
+and is case sensitive. Any user who should have the privilege to access the 
+reports panel, should be in this group, without it the report panel can't be 
+accessed. 
+
+
+Database settings
+
+PostgreSQl with the db name 'library'
+Environment variables - 'DB_USER' and 'DB_PASSWORD' to access the db.
