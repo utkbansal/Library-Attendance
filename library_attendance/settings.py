@@ -78,10 +78,10 @@ WSGI_APPLICATION = 'library_attendance.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'library',
-        'USER': 'root',
-        'PASSWORD': '#bonjovi1',
+        'USER': os.environ['DB_USER'],
+        'PASSWORD': os.environ['DB_PASSWORD'],
         'HOST': '',
         'PORT': '',
     }
