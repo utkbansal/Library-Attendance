@@ -1,11 +1,14 @@
+import calendar
 import xlsxwriter
 from django.utils import timezone
+from datetime import time, datetime
+from pytz import timezone as tz
 
 from attendance.models import Attendance
 
 
 def report(year, month, output=None):
-    # for headders
+    # for headers
     date_now = timezone.datetime(year, month, 1)
     workbook = xlsxwriter.Workbook(output)
     worksheet = workbook.add_worksheet()
@@ -29,7 +32,7 @@ def report(year, month, output=None):
 
     fst_col = [['S.NO.', 'A'],
                ['DATE', 'B'],
-               ["DAY'S", 'C'],
+               ["DAY", 'C'],
                ['8:30AM \n TO \n 4:00PM', 'D'],
                ['4:00PM \nTO \n 7:00PM', 'E'],
                ['7:00PM \n TO \n 9:00PM', 'F'],
@@ -42,7 +45,7 @@ def report(year, month, output=None):
     worksheet.set_column('B:B', 18)
 
     for heading, x in fst_col:
-        worksheet.merge_range(x + '8' + ':' + x + '11' + '', heading,
+        worksheet.merge_range(x + '8:' + x + '11' + '', heading,
                               merge_format)
         if x != 'A' and x != 'B':
             worksheet.set_column(x + ':' + x, 13)
@@ -61,9 +64,6 @@ def report(year, month, output=None):
         days = range(1, 32)
     for day in days:
         time_start = timezone.datetime(year, month, day)
-        time_end = timezone.datetime(year, month, day, 23, 59, 59)
-        attds = Attendance.objects.filter(entry_time__gt=time_start,
-                                          entry_time__lt=time_end).all()
         time_start_slot_1 = timezone.datetime(year, month, day, 8, 30, 0)
         time_end_slot_1 = timezone.datetime(year, month, day, 15, 59, 59)
         time_start_slot_2 = timezone.datetime(year, month, day, 16, 0, 0)
@@ -73,22 +73,23 @@ def report(year, month, output=None):
         time_start_slot_4 = timezone.datetime(year, month, day, 21, 0, 0)
         time_end_slot_4 = timezone.datetime(year, month, day, 23, 59, 59)
         attds_slot_1 = Attendance.objects.filter(
-            entry_time__gt=time_start_slot_1,
-            entry_time__lt=time_end_slot_1).all()
+            entry_datetime__gte=time_start_slot_1,
+            entry_datetime__lte=time_end_slot_1).all()
         attds_slot_2 = Attendance.objects.filter(
-            entry_time__gt=time_start_slot_2,
-            entry_time__lt=time_end_slot_2).all()
+            entry_datetime__gte=time_start_slot_2,
+            entry_datetime__lte=time_end_slot_2).all()
         attds_slot_3 = Attendance.objects.filter(
-            entry_time__gt=time_start_slot_3,
-            entry_time__lt=time_end_slot_3).all()
+            entry_datetime__gte=time_start_slot_3,
+            entry_datetime__lte=time_end_slot_3).all()
         attds_slot_4 = Attendance.objects.filter(
-            entry_time__gt=time_start_slot_4,
-            entry_time__lt=time_end_slot_4).all()
+            entry_datetime__gte=time_start_slot_4,
+            entry_datetime__lte=time_end_slot_4).all()
         attds_slot_1_count = attds_slot_1.count()
         attds_slot_2_count = attds_slot_2.count()
         attds_slot_3_count = attds_slot_3.count()
         attds_slot_4_count = attds_slot_4.count()
-        attds_slot_5_count = attds_slot_2_count + attds_slot_3_count + attds_slot_4_count
+        attds_slot_5_count = attds_slot_2_count + attds_slot_3_count + \
+                             attds_slot_4_count
         attds_slot_6_count = attds_slot_5_count + attds_slot_1_count
 
         worksheet.write(10 + day, 0, day, format)
@@ -97,9 +98,7 @@ def report(year, month, output=None):
 
         # list for all the slots
         ls = [attds_slot_1_count, attds_slot_2_count, attds_slot_3_count,
-              attds_slot_4_count,
-              attds_slot_5_count, attds_slot_6_count
-              ]
+              attds_slot_4_count, attds_slot_5_count, attds_slot_6_count]
         for j in range(3, 9):
             if ls[-1] == 0:
                 worksheet.write(10 + day, j, 'Holiday', format)
@@ -110,3 +109,97 @@ def report(year, month, output=None):
 
     workbook.close()
     return workbook
+
+
+def true_reader(month, year, output=None):
+    """
+    :param month: month for which the true reader is required
+    :param year: year of which the true reader award is required
+    :param output: output file to which the excel would be written
+    :return: returns a workbook containing list of students with
+     their time spent in the library
+    """
+    date_start = timezone.datetime(year, month, 1)  # first day of the month
+    last_day = calendar.monthrange(year, month)[1]  # gets the last day of month
+    date_end = timezone.datetime(year, month,
+                                 last_day, 23, 59, 59) # last day of the month
+    workbook = xlsxwriter.Workbook(output)  # create a workbook
+    worksheet = workbook.add_worksheet()  # add a sheet
+    excel_format = workbook.add_format()
+    excel_format.set_align("vcenter")
+    excel_format.set_align("center")
+    merge_format = workbook.add_format({
+        'bold': True,
+        'border': 0,
+        'align': 'center',
+        'valign': 'vcenter',
+    })
+    worksheet.merge_range('A1:C6',
+                          "AKGEC Library: True Reader Excel for %s" %
+                          date_start.strftime("%B %Y"), merge_format)
+    all_attendance = Attendance.objects.filter(
+            entry_datetime__gte=date_start, entry_datetime__lte=date_end,
+            exit_datetime__isnull=False)
+    student_numbers = [stud_num[0] for stud_num in
+                       all_attendance.order_by().values_list(
+                               'student_number').distinct().all()]
+    # print(student_numbers)
+    student_records = []
+    in_tz = tz('Asia/Kolkata')
+    for student_number in student_numbers:
+        td = timezone.timedelta()  # for storing total time spent by student
+        student_attendances = all_attendance.filter(
+                student_number=student_number,
+                exit_time__gte=time(10, 30, 0),
+                exit_time__lte=time(18, 30, 0)
+        ).all()
+        print(student_attendances)
+        for student_attendance in student_attendances:
+            if student_attendance.exit_time >= time(10, 30, 0):
+                if student_attendance.entry_time >= time(10, 30, 0):
+                    td += (student_attendance.exit_datetime -
+                           student_attendance.entry_datetime)
+                else:
+                    td += (student_attendance.exit_datetime -
+                           in_tz.localize(datetime.combine(
+                                   student_attendance.entry_datetime.date(),
+                                   time(16, 0, 0)
+                           )))
+        if td > timezone.timedelta(0, 1):
+            time_spent = day_hour_minute_seconds(td)
+            student_records.append((student_number, time_spent, td))
+    student_records.sort(key=lambda x: x[2], reverse=True)
+    first_row = [["Rank", "A"], ["Student Number", "B"],
+                 ["Time Spent", "C"]]
+    for fr in first_row:
+        worksheet.merge_range(fr[1] + '7:' + fr[1] + '9', fr[0],
+                              merge_format)
+    worksheet.set_column("A:A", 6)
+    worksheet.set_column("B:B", 16)
+    worksheet.set_column("C:C", 36)
+    for i in range(len(student_records)):
+        worksheet.write(9 + i, 0, i+1, excel_format)
+        worksheet.write(9 + i, 1, student_records[i][0], excel_format)
+        worksheet.write(9 + i, 2, student_records[i][1], excel_format)
+
+    workbook.close()
+    return workbook
+
+
+def day_hour_minute_seconds(td):
+    """
+    converts a timedelta object into day, hour, minutes, second string like
+    `1 day 12 hours 3 minutes 23 seconds`
+    :param td: timedelta object
+    :return: string described above
+    """
+    days = td.days
+    hours = td.seconds//3600
+    minutes = (td.seconds//60)%60
+    seconds = td.seconds%60
+    return "%d day%s %d hour%s %d minute%s %d second%s" % (
+        days, "" if days==1 else "s",
+        hours, "" if hours==1 else "s",
+        minutes, "" if minutes==1 else "s",
+        seconds, "" if seconds==1 else "s"
+    )

@@ -12,8 +12,10 @@ class Room(models.Model):
 
 class Attendance(models.Model):
     room = models.ForeignKey('Room')
-    entry_time = models.DateTimeField()
-    exit_time = models.DateTimeField(null=True, default=None)
+    entry_datetime = models.DateTimeField(auto_now=True)
+    entry_time = models.TimeField(auto_now=True)
+    exit_datetime = models.DateTimeField(null=True, default=None)
+    exit_time = models.TimeField(null=True, default=None)
     student_number = models.CharField(max_length=255)
 
     @staticmethod
@@ -21,7 +23,7 @@ class Attendance(models.Model):
         """
         :return: a list of students currently in the library
         """
-        return Attendance.objects.filter(exit_time=None)
+        return Attendance.objects.filter(exit_datetime=None)
 
     @staticmethod
     def student_in_library(student_number):
@@ -47,7 +49,6 @@ class Attendance(models.Model):
         room = Room.objects.get(id=room)
         obj = Attendance(
             student_number=student_number,
-            entry_time=timezone.now(),
             room=room
         )
         obj.save()
@@ -55,15 +56,15 @@ class Attendance(models.Model):
     @staticmethod
     def exit(student_number):
         """
-
         :param student_number: student_number to be exited
         :return: Nothing, just exits the student
         """
         Attendance.objects.filter(
             student_number=student_number,
-            exit_time=None
+            exit_datetime=None
         ).update(
-            exit_time=timezone.now()
+            exit_datetime=timezone.now(),
+            exit_time=timezone.now().time()
         )
 
     def __str__(self):
@@ -71,4 +72,4 @@ class Attendance(models.Model):
 
     class Meta:
         verbose_name_plural = 'Attendance'
-        ordering = ['entry_time', 'exit_time']
+        ordering = ['entry_datetime', 'exit_datetime']

@@ -24,7 +24,7 @@
         <a href="{% url 'attendance' %}" class="brand-logo">Library Attendance</a>
         <ul class="right hide-on-med-and-down">
             <li><a href="{% url 'report-admin' %}"><i
-                    class="material-icons left">assessment</i>Admin</a></>
+                    class="material-icons left">assessment</i>Admin</a></li>
             {% if user.is_authenticated %}
                 <li><a href="{% url 'logout' %}"><i class="material-icons left">power_settings_new</i>Logout</a>
                 </li>
