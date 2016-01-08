@@ -19,10 +19,13 @@ class Attendance(models.Model):
     student_number = models.CharField(max_length=255)
 
     @staticmethod
-    def students_in_library():
+    def students_in_library(room_id=None):
         """
         :return: a list of students currently in the library
         """
+        if room_id:
+            room = Room.objects.get(pk=room_id)
+            return Attendance.objects.filter(exit_datetime=None, room=room)
         return Attendance.objects.filter(exit_datetime=None)
 
     @staticmethod
