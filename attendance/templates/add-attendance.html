@@ -29,7 +29,7 @@
         <div class="col m4 offset-m1 student-numbers">
 
 
-            {% for student in students %}
+            {% for student in students reversed  %}
                 <div class="card-panel hoverable">
                     <i class="material-icons left">perm_identity</i>
                     <span class="blue-text">{{ student.student_number }} </span>
