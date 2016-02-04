@@ -6,30 +6,69 @@
 {% endblock %}
 
 
+{% block js %}
+    <script>
+        $(document).ready(function () {
+
+
+            {#            $('#id_student_number').addClass("active");#}
+            Materialize.showStaggeredList('#staggered-test');
+            {#            $('#id_student_number').click();#}
+                        $('#id_student_number').focus();
+        });
+    </script>
+
+{% endblock %}
+
 {% block content %}
+
+
     <div class="row">
-        <div class="col m5 card-panel hoverable" id="attendance-form-div">
-            <form method="post" id="attendance-form">
-                {% csrf_token %}
-                {% for field in form %}
-                    <div class="row">
-                        <div class="input-field col m12">
-                            {{ field.errors }}{{ field }}
-                            {{ field.label_tag }}
-                        </div>
+        <div class="col m5 entry">
+            <div class="row">
+                <div class="card-panel hoverable">
+                    Currently {{ num_students }} students in the library
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col m12 card-panel hoverable" id="attendance-form-div">
+                    <form method="post" id="attendance-form">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="row">
+                                <div class="input-field col m12">
+                                    {{ field.errors }}{{ field }}
+                                    {{ field.label_tag }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <button class="btn waves-effect waves-light blue" type="submit"
+                                name="action">Submit
+                            <i class="material-icons right">send</i>
+                        </button>
+                    </form>
+                    <div class="col m12">
+                        {% if messages %}
+                            <ul class="messages" id="staggered-test">
+                                {% for message in messages %}
+                                    <div>
+                                        <li{% if message.tags %}
+                                            class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                    </div>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                     </div>
-                {% endfor %}
-                <button class="btn waves-effect waves-light blue" type="submit"
-                        name="action">Submit
-                    <i class="material-icons right">send</i>
-                </button>
-            </form>
+                </div>
+            </div>
         </div>
+
 
         <div class="col m4 offset-m1 student-numbers">
 
 
-            {% for student in students reversed  %}
+            {% for student in students reversed %}
                 <div class="card-panel hoverable">
                     <i class="material-icons left">perm_identity</i>
                     <span class="blue-text">{{ student.student_number }} </span>

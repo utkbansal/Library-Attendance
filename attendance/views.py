@@ -11,7 +11,7 @@ from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
 
 from .forms import LoginForm, AttendanceForm
 from .models import Room, Attendance
-
+from django.contrib import messages
 
 class AttendanceView(LoginRequiredMixin, FormView):
     form_class = AttendanceForm
@@ -23,15 +23,19 @@ class AttendanceView(LoginRequiredMixin, FormView):
         # If student is in library do an exit
         if Attendance.student_in_library(student_number):
             Attendance.exit(student_number)
+            messages.add_message(self.request, messages.INFO, student_number+' has exited the library')
             return redirect(self.success_url)
         # If student not already in the library do a new entry
         Attendance.entry(student_number, self.request.session['room'])
+        messages.add_message(self.request, messages.SUCCESS, student_number+' has entered the library')
         return redirect(self.success_url)
 
     def get_context_data(self, **kwargs):
         context = super(AttendanceView, self).get_context_data(**kwargs)
-        context['students'] = Attendance.students_in_library(
+        students = Attendance.students_in_library(
                 self.request.session['room'])
+        context['students'] = students
+        context['num_students'] = len(students)
         return context
 
 
