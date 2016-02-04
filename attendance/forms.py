@@ -5,7 +5,7 @@ from .models import Room
 
 
 class AttendanceForm(forms.Form):
-    student_number = forms.CharField()
+    student_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder': '   '}))
 
 
 class LoginForm(AuthenticationForm):
