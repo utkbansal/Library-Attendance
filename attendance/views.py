@@ -20,14 +20,18 @@ class AttendanceView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         student_number = form.cleaned_data['student_number']
+        if len(student_number) > 12:
+            messages.add_message(self.request, messages.INFO, student_number +
+                                 ' is not a valid student number')
+            redirect(self.success_url)
         # If student is in library do an exit
         if Attendance.student_in_library(student_number):
             Attendance.exit(student_number)
-            messages.add_message(self.request, messages.INFO, student_number+' has exited the library')
+            messages.add_message(self.request, messages.INFO, student_number + ' has exited the library')
             return redirect(self.success_url)
         # If student not already in the library do a new entry
         Attendance.entry(student_number, self.request.session['room'])
-        messages.add_message(self.request, messages.SUCCESS, student_number+' has entered the library')
+        messages.add_message(self.request, messages.SUCCESS, student_number + ' has entered the library')
         return redirect(self.success_url)
 
     def get_context_data(self, **kwargs):
