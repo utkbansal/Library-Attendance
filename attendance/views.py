@@ -23,7 +23,7 @@ class AttendanceView(LoginRequiredMixin, FormView):
         if len(student_number) > 12:
             messages.add_message(self.request, messages.INFO, student_number +
                                  ' is not a valid student number')
-            redirect(self.success_url)
+            return redirect(self.success_url)
         # If student is in library do an exit
         if Attendance.student_in_library(student_number):
             Attendance.exit(student_number)
