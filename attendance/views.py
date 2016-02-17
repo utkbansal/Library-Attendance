@@ -19,7 +19,7 @@ class AttendanceView(LoginRequiredMixin, FormView):
     success_url = reverse_lazy('attendance')
 
     def form_valid(self, form):
-        student_number = form.cleaned_data['student_number']
+        student_number = form.cleaned_data['student_number'].strip()
         if len(student_number) > 12:
             messages.add_message(self.request, messages.INFO, student_number +
                                  ' is not a valid student number')
