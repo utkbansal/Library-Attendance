@@ -13,6 +13,7 @@ from .forms import LoginForm, AttendanceForm
 from .models import Room, Attendance
 from django.contrib import messages
 
+
 class AttendanceView(LoginRequiredMixin, FormView):
     form_class = AttendanceForm
     template_name = 'add-attendance.html'
@@ -20,7 +21,7 @@ class AttendanceView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         student_number = form.cleaned_data['student_number'].strip()
-        if len(student_number) > 12:
+        if len(student_number) > 12 or len(student_number) < 3:
             messages.add_message(self.request, messages.INFO, student_number +
                                  ' is not a valid student number')
             return redirect(self.success_url)
@@ -68,6 +69,12 @@ class LogoutView(LoginRequiredMixin, RedirectView):
         logout(request)
         return redirect(reverse_lazy('login'))
 
+
+class ExitAllView(RedirectView):
+    def get(self, request, *args, **kwargs):
+        room = Room.objects.get(pk=request.session.get('room'))
+        Attendance.exit_all(room)
+        return redirect(reverse_lazy('attendance'))
 
 # class ExcelView(FormView):
 #     form_class = ExcelForm

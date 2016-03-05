@@ -70,6 +70,21 @@ class Attendance(models.Model):
             exit_time=timezone.now().time()
         )
 
+    @staticmethod
+    def exit_all(room):
+        """
+        exits all the students from the room of the library
+        :param room: room in which students are sitting
+        :return: None
+        """
+        Attendance.objects.filter(
+            room=room,
+            exit_datetime=None
+        ).update(
+            exit_datetime=timezone.now(),
+            exit_time=timezone.now().time()
+        )
+
     def __str__(self):
         return self.student_number
 
