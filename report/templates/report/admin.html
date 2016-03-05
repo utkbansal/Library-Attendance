@@ -23,7 +23,10 @@
                 <div class="valign">
                     <div class="card col m5">
                         <div class="card-content">
-                            {% lorem 1 p %}
+                            <span>
+                                Generates monthly excel report of how many students
+                                have attended the library at what time slots.
+                            </span>
                         </div>
                         <div class=" card-action">
                             <a href="{% url 'monthly-report' %}">
@@ -33,13 +36,30 @@
 
                     <div class="card col m5 offset-m2">
                         <div class="card-content">
-                            {% lorem 1 p %}
+                            <span>
+                                Generates an excel with list of students who have
+                                spent maximum hours of study in library.
+                            </span>
                         </div>
                         <div class="card-action">
                             <a href="{% url 'true-reader-report' %}">
                                 <i class="material-icons left">assignment</i>True
                                 Reader
                                 Award</a>
+                        </div>
+                    </div>
+                    <div class="card col m5 offset-m3">
+                        <div class="card-content">
+                            <span>
+                                Click this link to exit all the students from
+                                the current room of the library.
+                            </span>
+                        </div>
+                        <div class="card-action">
+                            <a href="{% url 'exit_all' %}">
+                                <i class="material-icons left">assignment</i>
+                                Exit All
+                            </a>
                         </div>
                     </div>
                 </div>
