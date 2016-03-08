@@ -14,12 +14,12 @@ def report(year, month, output=None):
     date_now = timezone.datetime(year, month, 1)
     workbook = xlsxwriter.Workbook(output)
     worksheet = workbook.add_worksheet()
-    format = workbook.add_format()
-    format.set_align('center')
-    format.set_align('vcenter')
+    cell_format = workbook.add_format()
+    cell_format.set_align('center')
+    cell_format.set_align('vcenter')
 
     # line separator
-    sep = os.linesep
+    sep = "\n\r"
 
     merge_format = workbook.add_format({
         'bold': True,
@@ -48,7 +48,6 @@ def report(year, month, output=None):
                ]
     worksheet.set_column('A:A', 5)
     worksheet.set_column('B:B', 18)
-
     for heading, x in fst_col:
         worksheet.merge_range(x + '8:' + x + '11' + '', heading,
                               merge_format)
@@ -67,6 +66,10 @@ def report(year, month, output=None):
         days = range(1, 31)
     else:
         days = range(1, 32)
+
+    num_working_days = 0
+    attds_slots_total = [0] * 6
+    day = 1
     for day in days:
         time_start = timezone.datetime(year, month, day)
         time_start_slot_1 = timezone.datetime(year, month, day, 8, 30, 0)
@@ -89,28 +92,79 @@ def report(year, month, output=None):
         attds_slot_4 = Attendance.objects.filter(
             entry_datetime__gte=time_start_slot_4,
             entry_datetime__lte=time_end_slot_4).all()
-        attds_slot_1_count = attds_slot_1.count()
-        attds_slot_2_count = attds_slot_2.count()
-        attds_slot_3_count = attds_slot_3.count()
-        attds_slot_4_count = attds_slot_4.count()
-        attds_slot_5_count = attds_slot_2_count + attds_slot_3_count + \
-                             attds_slot_4_count
-        attds_slot_6_count = attds_slot_5_count + attds_slot_1_count
+        attds_slot_counts = []
+        attds_slot_counts.append(attds_slot_1.count())
+        attds_slot_counts.append(attds_slot_2.count())
+        attds_slot_counts.append(attds_slot_2.count())
+        attds_slot_counts.append(attds_slot_3.count())
+        attds_slot_counts.append(attds_slot_4.count())
+        attds_slot_counts.append(attds_slot_counts[1] + attds_slot_counts[2] +
+                                 attds_slot_counts[3])
+        attds_slot_counts.append(attds_slot_counts[4] + attds_slot_counts[0])
 
-        worksheet.write(10 + day, 0, day, format)
-        worksheet.write(10 + day, 1, time_start.strftime("%d, %B %Y"), format)
-        worksheet.write(10 + day, 2, time_start.strftime('%A'), format)
+        # update total count for each slot
+        attds_slots_total[0] += attds_slot_counts[0]
+        attds_slots_total[1] += attds_slot_counts[1]
+        attds_slots_total[2] += attds_slot_counts[2]
+        attds_slots_total[3] += attds_slot_counts[3]
+        attds_slots_total[4] += attds_slot_counts[4]
+        attds_slots_total[5] += attds_slot_counts[5]
 
-        # list for all the slots
-        ls = [attds_slot_1_count, attds_slot_2_count, attds_slot_3_count,
-              attds_slot_4_count, attds_slot_5_count, attds_slot_6_count]
+        worksheet.write(10 + day, 0, day, cell_format)
+        worksheet.write(10 + day, 1, time_start.strftime("%d, %B %Y"), cell_format)
+        worksheet.write(10 + day, 2, time_start.strftime('%A'), cell_format)
+
+        if attds_slot_counts[-1] != 0:
+            num_working_days += 1
         for j in range(3, 9):
-            if ls[-1] == 0:
-                worksheet.write(10 + day, j, 'Holiday', format)
-            elif ls[j - 3] == 0:
-                worksheet.write(10 + day, j, 'Closed', format)
+            if attds_slot_counts[-1] == 0:
+                worksheet.write(10 + day, j, 'Holiday', cell_format)
+            elif attds_slot_counts[j - 3] == 0:
+                worksheet.write(10 + day, j, 'Closed', cell_format)
             else:
-                worksheet.write(10 + day, j, ls[j - 3], format)
+                worksheet.write(10 + day, j, attds_slot_counts[j - 3], cell_format)
+    # slot-wise average if num_working_days is not zero
+    attds_slots_avg = [0] * 6
+    if num_working_days:
+        attds_slots_avg[0] = float(attds_slots_total[0]) / num_working_days
+        attds_slots_avg[1] = float(attds_slots_total[1]) / num_working_days
+        attds_slots_avg[2] = float(attds_slots_total[2]) / num_working_days
+        attds_slots_avg[3] = float(attds_slots_total[3]) / num_working_days
+        attds_slots_avg[4] = float(attds_slots_total[4]) / num_working_days
+        attds_slots_avg[5] = float(attds_slots_total[5]) / num_working_days
+
+    worksheet.merge_range(10 + day + 1, 0, 10 + day + 1, 2,
+                          "Average", merge_format)
+    worksheet.write(10 + day + 1, 3,
+                    "%d / %d = %.2f" % (attds_slots_total[0],
+                                        num_working_days,
+                                        attds_slots_avg[0])
+                    if attds_slots_total[0] else "-", merge_format)
+    worksheet.write(10 + day + 1, 4,
+                    "%d / %d = %.2f" % (attds_slots_total[1],
+                                        num_working_days,
+                                        attds_slots_avg[1])
+                    if attds_slots_total[1] else "-", merge_format)
+    worksheet.write(10 + day + 1, 5,
+                    "%d / %d = %.2f" % (attds_slots_total[2],
+                                        num_working_days,
+                                        attds_slots_avg[2])
+                    if attds_slots_total[2] else "-", merge_format)
+    worksheet.write(10 + day + 1, 6,
+                    "%d / %d = %.2f" % (attds_slots_total[3],
+                                        num_working_days,
+                                        attds_slots_avg[3])
+                    if attds_slots_total[3] else "-", merge_format)
+    worksheet.write(10 + day + 1, 7,
+                    "%d / %d = %.2f" % (attds_slots_total[4],
+                                        num_working_days,
+                                        attds_slots_avg[4])
+                    if attds_slots_total[4] else "-", merge_format)
+    worksheet.write(10 + day + 1, 8,
+                    "%d / %d = %.2f" % (attds_slots_total[5],
+                                        num_working_days,
+                                        attds_slots_avg[5])
+                    if attds_slots_total[5] else "-", merge_format)
 
     workbook.close()
     return workbook
