@@ -29,6 +29,10 @@ def report(year, month, output=None):
 
     })
 
+    footer_format = workbook.add_format({
+        'bold': True,
+        'border': 0,
+    })
     worksheet.merge_range('A1:J6',
                           'AJAY KUMAR GARG ENGINEERING COLLEGE, GHAZIABAD ' +
                           sep + 'CENTRAL LIBRARY ' + sep +
@@ -133,39 +137,55 @@ def report(year, month, output=None):
         attds_slots_avg[4] = float(attds_slots_total[4]) / num_working_days
         attds_slots_avg[5] = float(attds_slots_total[5]) / num_working_days
 
-    worksheet.merge_range(10 + day + 1, 0, 10 + day + 1, 2,
+    worksheet.merge_range(10 + day + 1, 0, 10 + day + 2, 2,
                           "Average", merge_format)
-    worksheet.write(10 + day + 1, 3,
-                    "%d / %d = %.2f" % (attds_slots_total[0],
-                                        num_working_days,
-                                        attds_slots_avg[0])
-                    if attds_slots_total[0] else "-", merge_format)
-    worksheet.write(10 + day + 1, 4,
-                    "%d / %d = %.2f" % (attds_slots_total[1],
-                                        num_working_days,
-                                        attds_slots_avg[1])
-                    if attds_slots_total[1] else "-", merge_format)
-    worksheet.write(10 + day + 1, 5,
-                    "%d / %d = %.2f" % (attds_slots_total[2],
-                                        num_working_days,
-                                        attds_slots_avg[2])
-                    if attds_slots_total[2] else "-", merge_format)
-    worksheet.write(10 + day + 1, 6,
-                    "%d / %d = %.2f" % (attds_slots_total[3],
-                                        num_working_days,
-                                        attds_slots_avg[3])
-                    if attds_slots_total[3] else "-", merge_format)
-    worksheet.write(10 + day + 1, 7,
-                    "%d / %d = %.2f" % (attds_slots_total[4],
-                                        num_working_days,
-                                        attds_slots_avg[4])
-                    if attds_slots_total[4] else "-", merge_format)
-    worksheet.write(10 + day + 1, 8,
-                    "%d / %d = %.2f" % (attds_slots_total[5],
-                                        num_working_days,
-                                        attds_slots_avg[5])
-                    if attds_slots_total[5] else "-", merge_format)
+    worksheet.merge_range(
+        10 + day + 1, 3, 10 + day + 2, 3,
+        "%d / %d %s= %.2f" %
+        (attds_slots_total[0], num_working_days, sep, attds_slots_avg[0])
+        if attds_slots_total[0] else "-", merge_format
+    )
+    worksheet.merge_range(
+        10 + day + 1, 4, 10 + day + 2, 4,
+        "%d / %d %s= %.2f" %
+        (attds_slots_total[1], num_working_days, sep, attds_slots_avg[1])
+        if attds_slots_total[1] else "-", merge_format
+    )
+    worksheet.merge_range(
+        10 + day + 1, 5, 10 + day + 2, 5,
+        "%d / %d %s= %.2f" %
+        (attds_slots_total[2], num_working_days, sep, attds_slots_avg[2])
+        if attds_slots_total[2] else "-", merge_format
+    )
+    worksheet.merge_range(
+        10 + day + 1, 6, 10 + day + 2, 6,
+        "%d / %d %s= %.2f" %
+        (attds_slots_total[3], num_working_days, sep, attds_slots_avg[3])
+        if attds_slots_total[3] else "-", merge_format
+    )
+    worksheet.merge_range(
+        10 + day + 1, 7, 10 + day + 2, 7,
+        "%d / %d %s= %.2f" %
+        (attds_slots_total[4], num_working_days, sep, attds_slots_avg[4])
+        if attds_slots_total[4] else "-", merge_format
+    )
+    worksheet.merge_range(
+        10 + day + 1, 8, 10 + day + 2, 8,
+        "%d / %d %s= %.2f" %
+        (attds_slots_total[5], num_working_days, sep, attds_slots_avg[5])
+        if attds_slots_total[5] else "-", merge_format
+    )
 
+    # footer
+    worksheet.merge_range(
+        20 + day, 0, 20 + day + 1, 2,
+        " Dr. Shiv Shankar Srivastava%s (Sr. Librarian)" % sep, footer_format
+    )
+
+    worksheet.merge_range(
+        20 + day, 7, 20 + day + 1, 9,
+        " Prof. B.M. Kalra%s (Dean Library Resources)" % sep, footer_format
+    )
     workbook.close()
     return workbook
 
