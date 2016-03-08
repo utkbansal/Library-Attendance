@@ -1,5 +1,7 @@
+import os
 import calendar
 import xlsxwriter
+
 from django.utils import timezone
 from datetime import time, datetime
 from pytz import timezone as tz
@@ -16,6 +18,9 @@ def report(year, month, output=None):
     format.set_align('center')
     format.set_align('vcenter')
 
+    # line separator
+    sep = os.linesep
+
     merge_format = workbook.add_format({
         'bold': True,
         'border': 0,
@@ -25,20 +30,20 @@ def report(year, month, output=None):
     })
 
     worksheet.merge_range('A1:J6',
-                          'AJAY KUMAR GARG ENGINEERING COLLEGE, GHAZIABAD \n' +
-                          'CENTRAL LIBRARY \n ' +
+                          'AJAY KUMAR GARG ENGINEERING COLLEGE, GHAZIABAD ' +
+                          sep + 'CENTRAL LIBRARY ' + sep +
                           'LIBRARY VISITORS REPORT: ' + date_now.strftime(
                               "%B %Y"), merge_format)
 
     fst_col = [['S.NO.', 'A'],
                ['DATE', 'B'],
                ["DAY", 'C'],
-               ['8:30AM \n TO \n 4:00PM', 'D'],
-               ['4:00PM \nTO \n 7:00PM', 'E'],
-               ['7:00PM \n TO \n 9:00PM', 'F'],
-               ['9:00PM \n TO \n 12 MIDNIGHT', 'G'],
-               ['TOTAL \n 4:00PM \n TO \n 12 MIDNIGHT', 'H'],
-               ['TOTAL \n 8:30AM \n TO \n 12 MIDNIGHT', 'I'],
+               ['8:30AM' + sep + 'TO' + sep + '4:00PM', 'D'],
+               ['4:00PM' + sep + 'TO' + sep + '7:00PM', 'E'],
+               ['7:00PM' + sep + 'TO' + sep + '9:00PM', 'F'],
+               ['9:00PM' + sep + 'TO' + sep + '12 MIDNIGHT', 'G'],
+               ['TOTAL' + sep + '4:00PM' + sep + 'TO' + sep + '12 MIDNIGHT', 'H'],
+               ['TOTAL' + sep + ' 8:30AM' + sep + 'TO' + sep + '12 MIDNIGHT', 'I'],
                ['REMARKS', 'J']
                ]
     worksheet.set_column('A:A', 5)
