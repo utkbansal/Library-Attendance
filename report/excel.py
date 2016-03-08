@@ -19,7 +19,7 @@ def report(year, month, output=None):
     cell_format.set_align('vcenter')
 
     # line separator
-    sep = "\n\r"
+    sep = os.linesep
 
     merge_format = workbook.add_format({
         'bold': True,
