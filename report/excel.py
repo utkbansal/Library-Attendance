@@ -214,7 +214,7 @@ def true_reader(month, year, output=None):
         'align': 'center',
         'valign': 'vcenter',
     })
-    worksheet.merge_range('A1:C6',
+    worksheet.merge_range('A1:D6',
                           "AKGEC Library: True Reader Excel for %s" %
                           date_start.strftime("%B %Y"), merge_format)
     all_attendance = Attendance.objects.filter(
