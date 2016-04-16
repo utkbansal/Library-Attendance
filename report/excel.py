@@ -224,7 +224,7 @@ def true_reader(month, year, output=None):
                        all_attendance.order_by().values_list(
                                'student_number').distinct().all()]
     # print(student_numbers)
-    student_records = []
+    student_records = list()
     in_tz = tz('Asia/Kolkata')
     for student_number in student_numbers:
         td = timezone.timedelta()  # for storing total time spent by student
@@ -233,9 +233,10 @@ def true_reader(month, year, output=None):
                 exit_time__gte=time(10, 30, 0),
                 exit_time__lte=time(18, 30, 0)
         ).all()
-        print(student_attendances)
+        date_set = set()
         for student_attendance in student_attendances:
             if student_attendance.exit_time >= time(10, 30, 0):
+                date_set.add(student_attendance.exit_datetime.date())
                 if student_attendance.entry_time >= time(10, 30, 0):
                     td += (student_attendance.exit_datetime -
                            student_attendance.entry_datetime)
@@ -247,20 +248,23 @@ def true_reader(month, year, output=None):
                            )))
         if td > timezone.timedelta(0, 1):
             time_spent = day_hour_minute_seconds(td)
-            student_records.append((student_number, time_spent, td))
+            student_records.append((student_number, time_spent, td,
+                                    len(date_set)))
     student_records.sort(key=lambda x: x[2], reverse=True)
     first_row = [["Rank", "A"], ["Student Number", "B"],
-                 ["Time Spent", "C"]]
+                 ["Time Spent", "C"], ["Number of Days", "D"]]
     for fr in first_row:
         worksheet.merge_range(fr[1] + '7:' + fr[1] + '9', fr[0],
                               merge_format)
     worksheet.set_column("A:A", 6)
     worksheet.set_column("B:B", 16)
     worksheet.set_column("C:C", 36)
+    worksheet.set_column("D:D", 16)
     for i in range(len(student_records)):
         worksheet.write(9 + i, 0, i+1, excel_format)
         worksheet.write(9 + i, 1, student_records[i][0], excel_format)
         worksheet.write(9 + i, 2, student_records[i][1], excel_format)
+        worksheet.write(9 + i, 3, student_records[i][3], excel_format)
 
     workbook.close()
     return workbook
