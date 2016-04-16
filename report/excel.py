@@ -86,22 +86,22 @@ def report(year, month, output=None):
         time_end_slot_4 = timezone.datetime(year, month, day, 23, 59, 59)
         attds_slot_1 = Attendance.objects.filter(
             entry_datetime__gte=time_start_slot_1,
-            entry_datetime__lte=time_end_slot_1).all()
+            entry_datetime__lte=time_end_slot_1).count()
         attds_slot_2 = Attendance.objects.filter(
             entry_datetime__gte=time_start_slot_2,
-            entry_datetime__lte=time_end_slot_2).all()
+            entry_datetime__lte=time_end_slot_2).count()
         attds_slot_3 = Attendance.objects.filter(
             entry_datetime__gte=time_start_slot_3,
-            entry_datetime__lte=time_end_slot_3).all()
+            entry_datetime__lte=time_end_slot_3).count()
         attds_slot_4 = Attendance.objects.filter(
             entry_datetime__gte=time_start_slot_4,
-            entry_datetime__lte=time_end_slot_4).all()
-        attds_slot_counts = []
-        attds_slot_counts.append(attds_slot_1.count())
-        attds_slot_counts.append(attds_slot_2.count())
-        attds_slot_counts.append(attds_slot_2.count())
-        attds_slot_counts.append(attds_slot_3.count())
-        attds_slot_counts.append(attds_slot_4.count())
+            entry_datetime__lte=time_end_slot_4).count()
+        attds_slot_counts = list()
+        attds_slot_counts.append(attds_slot_1)
+        attds_slot_counts.append(attds_slot_2)
+        attds_slot_counts.append(attds_slot_3)
+        attds_slot_counts.append(attds_slot_4)
+        attds_slot_counts.append(attds_slot_4)
         attds_slot_counts.append(attds_slot_counts[1] + attds_slot_counts[2] +
                                  attds_slot_counts[3])
         attds_slot_counts.append(attds_slot_counts[4] + attds_slot_counts[0])
@@ -129,6 +129,7 @@ def report(year, month, output=None):
                 worksheet.write(10 + day, j, attds_slot_counts[j - 3], cell_format)
     # slot-wise average if num_working_days is not zero
     attds_slots_avg = [0] * 6
+    # num_working_days controversy to be discussed
     if num_working_days:
         attds_slots_avg[0] = float(attds_slots_total[0]) / num_working_days
         attds_slots_avg[1] = float(attds_slots_total[1]) / num_working_days
