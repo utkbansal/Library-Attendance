@@ -131,7 +131,7 @@ def report(year, month, output=None):
     worksheet.merge_range(10 + day, 0, 10 + day + 1, 2,
                           "Average", merge_format)
 
-    for i in range(3, len(attds_slots_avg)):
+    for i in range(3, len(attds_slots_avg) + 3):
 
         worksheet.merge_range(
             10 + day, i, 10 + day + 1, i,
