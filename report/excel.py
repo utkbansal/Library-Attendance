@@ -73,7 +73,6 @@ def report(year, month, output=None):
 
     num_working_days = 0
     attds_slots_total = [0] * 6
-    day = 1
     for day in days:
         time_start = timezone.datetime(year, month, day)
         time_start_slot_1 = timezone.datetime(year, month, day, 8, 30, 0)
@@ -96,23 +95,19 @@ def report(year, month, output=None):
         attds_slot_4 = Attendance.objects.filter(
             entry_datetime__gte=time_start_slot_4,
             entry_datetime__lte=time_end_slot_4).count()
+        attds_slot_5 = attds_slot_2 + attds_slot_3 + attds_slot_4
+        attds_slot_6 = attds_slot_5 + attds_slot_1
         attds_slot_counts = list()
         attds_slot_counts.append(attds_slot_1)
         attds_slot_counts.append(attds_slot_2)
         attds_slot_counts.append(attds_slot_3)
         attds_slot_counts.append(attds_slot_4)
-        attds_slot_counts.append(attds_slot_4)
-        attds_slot_counts.append(attds_slot_counts[1] + attds_slot_counts[2] +
-                                 attds_slot_counts[3])
-        attds_slot_counts.append(attds_slot_counts[4] + attds_slot_counts[0])
+        attds_slot_counts.append(attds_slot_5)
+        attds_slot_counts.append(attds_slot_6)
 
         # update total count for each slot
-        attds_slots_total[0] += attds_slot_counts[0]
-        attds_slots_total[1] += attds_slot_counts[1]
-        attds_slots_total[2] += attds_slot_counts[2]
-        attds_slots_total[3] += attds_slot_counts[3]
-        attds_slots_total[4] += attds_slot_counts[4]
-        attds_slots_total[5] += attds_slot_counts[5]
+        for i in range(len(attds_slot_counts)):
+            attds_slots_total[i] += attds_slot_counts[i]
 
         worksheet.write(10 + day, 0, day, cell_format)
         worksheet.write(10 + day, 1, time_start.strftime("%d, %B %Y"), cell_format)
