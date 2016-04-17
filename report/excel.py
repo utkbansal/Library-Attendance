@@ -124,54 +124,21 @@ def report(year, month, output=None):
                 worksheet.write(10 + day, j, attds_slot_counts[j - 3], cell_format)
     # slot-wise average if num_working_days is not zero
     attds_slots_avg = [0] * 6
-    # num_working_days controversy to be discussed
+    day += 1
     if num_working_days:
-        attds_slots_avg[0] = float(attds_slots_total[0]) / num_working_days
-        attds_slots_avg[1] = float(attds_slots_total[1]) / num_working_days
-        attds_slots_avg[2] = float(attds_slots_total[2]) / num_working_days
-        attds_slots_avg[3] = float(attds_slots_total[3]) / num_working_days
-        attds_slots_avg[4] = float(attds_slots_total[4]) / num_working_days
-        attds_slots_avg[5] = float(attds_slots_total[5]) / num_working_days
-
-    worksheet.merge_range(10 + day + 1, 0, 10 + day + 2, 2,
+        for i in range(len(attds_slots_avg)):
+            attds_slots_avg[i] = float(attds_slots_total[i]) / num_working_days
+    worksheet.merge_range(10 + day, 0, 10 + day + 1, 2,
                           "Average", merge_format)
-    worksheet.merge_range(
-        10 + day + 1, 3, 10 + day + 2, 3,
-        "%d / %d %s= %.2f" %
-        (attds_slots_total[0], num_working_days, sep, attds_slots_avg[0])
-        if attds_slots_total[0] else "-", merge_format
-    )
-    worksheet.merge_range(
-        10 + day + 1, 4, 10 + day + 2, 4,
-        "%d / %d %s= %.2f" %
-        (attds_slots_total[1], num_working_days, sep, attds_slots_avg[1])
-        if attds_slots_total[1] else "-", merge_format
-    )
-    worksheet.merge_range(
-        10 + day + 1, 5, 10 + day + 2, 5,
-        "%d / %d %s= %.2f" %
-        (attds_slots_total[2], num_working_days, sep, attds_slots_avg[2])
-        if attds_slots_total[2] else "-", merge_format
-    )
-    worksheet.merge_range(
-        10 + day + 1, 6, 10 + day + 2, 6,
-        "%d / %d %s= %.2f" %
-        (attds_slots_total[3], num_working_days, sep, attds_slots_avg[3])
-        if attds_slots_total[3] else "-", merge_format
-    )
-    worksheet.merge_range(
-        10 + day + 1, 7, 10 + day + 2, 7,
-        "%d / %d %s= %.2f" %
-        (attds_slots_total[4], num_working_days, sep, attds_slots_avg[4])
-        if attds_slots_total[4] else "-", merge_format
-    )
-    worksheet.merge_range(
-        10 + day + 1, 8, 10 + day + 2, 8,
-        "%d / %d %s= %.2f" %
-        (attds_slots_total[5], num_working_days, sep, attds_slots_avg[5])
-        if attds_slots_total[5] else "-", merge_format
-    )
 
+    for i in range(3, len(attds_slots_avg)):
+
+        worksheet.merge_range(
+            10 + day, i, 10 + day + 1, 3,
+            "%d / %d %s= %.2f" %
+            (attds_slots_total[i-3], num_working_days, sep, attds_slots_avg[i-3])
+            if attds_slots_total[i-3] else "-", merge_format
+        )
     # footer
     worksheet.merge_range(
         20 + day, 0, 20 + day + 1, 2,
