@@ -134,7 +134,7 @@ def report(year, month, output=None):
     for i in range(3, len(attds_slots_avg)):
 
         worksheet.merge_range(
-            10 + day, i, 10 + day + 1, 3,
+            10 + day, i, 10 + day + 1, i,
             "%d / %d %s= %.2f" %
             (attds_slots_total[i-3], num_working_days, sep, attds_slots_avg[i-3])
             if attds_slots_total[i-3] else "-", merge_format
