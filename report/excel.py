@@ -240,12 +240,27 @@ def day_hour_minute_seconds(td):
     :return: string described above
     """
     days = td.days
+    if days:
+        day_str = "{} day{}, ".format(days, "" if days == 1 else "s")
+    else:
+        day_str = ""
+
     hours = td.seconds//3600
-    minutes = (td.seconds//60)%60
-    seconds = td.seconds%60
-    return "%d day%s %d hour%s %d minute%s %d second%s" % (
-        days, "" if days==1 else "s",
-        hours, "" if hours==1 else "s",
-        minutes, "" if minutes==1 else "s",
-        seconds, "" if seconds==1 else "s"
-    )
+    if hours:
+        hour_str = "{} hour{}, ".format(hours, "" if hours == 1 else "s")
+    else:
+        hour_str = ""
+
+    minutes = (td.seconds//60) % 60
+    if minutes:
+        minute_str = "{} minute{}, ".format(minutes, "" if minutes == 1 else "s")
+    else:
+        minute_str = ""
+
+    seconds = td.seconds % 60
+    if seconds:
+        seconds_str = "{} second{}".format(seconds, "" if days == 1 else "s")
+    else:
+        seconds_str = ""
+
+    return day_str + hour_str + minute_str + seconds_str
