@@ -38,7 +38,7 @@
                         <div class="card-content">
                             <span>
                                 Generates an excel with list of students who have
-                                spent maximum hours of study in library.
+                                spent maximum hours of study in library in a given month.
                             </span>
                         </div>
                         <div class="card-action">
@@ -48,7 +48,26 @@
                                 Award</a>
                         </div>
                     </div>
-                    <div class="card col m5 offset-m3">
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="valign">
+                    <div class="card col m5">
+                        <div class="card-content">
+                            <span>
+                                Click this link to generate the details of true readers in selected month.
+                            </span>
+                        </div>
+                        <div class="card-action">
+                            <a href="{% url 'true-reader-detail' %}">
+                                <i class="material-icons left">assignment</i>
+                                True Reader Details
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card col m5 offset-m2">
                         <div class="card-content">
                             <span>
                                 Click this link to exit all the students from
@@ -62,6 +81,7 @@
                             </a>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

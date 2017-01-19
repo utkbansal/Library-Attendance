@@ -3,7 +3,7 @@ import calendar
 import xlsxwriter
 
 from django.utils import timezone
-from datetime import time, datetime
+from datetime import time, datetime, timedelta
 from pytz import timezone as tz
 
 from attendance.models import Attendance
@@ -165,7 +165,10 @@ def true_reader(month, year, output=None):
     last_day = calendar.monthrange(year, month)[1]  # gets the last day of month
     date_end = timezone.datetime(year, month,
                                  last_day, 23, 59, 59) # last day of the month
-    workbook = xlsxwriter.Workbook(output)  # create a workbook
+    if not output:
+        workbook = xlsxwriter.Workbook('true_reader.xlsx')
+    else:
+        workbook = xlsxwriter.Workbook(output)  # create a workbook
     worksheet = workbook.add_worksheet()  # add a sheet
     excel_format = workbook.add_format()
     excel_format.set_align("vcenter")
@@ -187,9 +190,9 @@ def true_reader(month, year, output=None):
                                'student_number').distinct().all()]
     # print(student_numbers)
     student_records = list()
-    in_tz = tz('Asia/Kolkata')
+    in_tz = tz('Asia/Kolkata')  # Indian time for localizing datetime object
     for student_number in student_numbers:
-        td = timezone.timedelta()  # for storing total time spent by student
+        td = timezone.timedelta()  # for storing total time spent by the student
         student_attendances = all_attendance.filter(
                 student_number=student_number,
                 exit_time__gte=time(10, 30, 0),
@@ -229,7 +232,96 @@ def true_reader(month, year, output=None):
         worksheet.write(9 + i, 3, student_records[i][3], excel_format)
 
     workbook.close()
-    return workbook
+    return student_records
+
+def true_reader_details(month, year, output=None):
+    """
+    This function takes month and year as arguments and returns a workbook
+    with details of first three true readers of the month.
+    Requires:
+    1 <= month <= 12
+    2016 <= year
+    :return: Workbook object with details of students coming to the library
+    """
+    true_readers = true_reader(month, year)[:3]
+
+    workbook1 = xlsxwriter.Workbook(output)
+    cell_format = workbook1.add_format()
+    cell_format.set_align('center')
+    cell_format.set_align('vcenter')
+    heading_format = workbook1.add_format({
+        'bold': True,
+        'border': 0,
+        'align': 'center',
+        'valign': 'vcenter',
+    })
+
+    date_start = timezone.datetime(year, month, 1)  # first day of the month
+    last_day = calendar.monthrange(year, month)[1]  # gets the last day of month
+    date_end = timezone.datetime(year, month,
+                                 last_day, 23, 59, 59)  # last day of the month
+
+    worksheet = workbook1.add_worksheet()
+    # setting appropriate column widths
+    worksheet.set_column('A:A', 9)
+    worksheet.set_column('B:B', 11)
+    worksheet.set_column('C:C', 14)
+    worksheet.set_column('D:D', 14)
+    worksheet.set_column('E:E', 14)
+    worksheet.set_column('F:F', 35)
+    worksheet.merge_range(
+        'A1:F6',
+        'True Reader Details for ' + date_start.strftime('%B - %Y'),
+        heading_format)
+    row, column = 6, 0
+    worksheet.write(row, column, "Serial No.", heading_format)
+    worksheet.write(row, column+1, "Student No.", heading_format)
+    worksheet.write(row, column+2, "Date", heading_format)
+    worksheet.write(row, column+3, "Entry Time", heading_format)
+    worksheet.write(row, column+4, "Exit Time", heading_format)
+    worksheet.write(row, column+5, "Duration", heading_format)
+    row += 1
+    i = 1  # serial number for excel
+    for reader in true_readers:
+        student_number = reader[0]
+        student_all_attendance = Attendance.objects.filter(student_number=student_number,
+                                                           entry_datetime__gte=date_start,
+                                                           exit_datetime__lte=date_end,
+                                                           )
+        # filtering the entries after 4 p.m IST
+        student_all_attendance = student_all_attendance.filter(
+            entry_time__gte=time(10, 30, 0),
+            exit_time__lte=time(18, 30, 0)
+        )
+
+        reader_entries = len(student_all_attendance)
+        if reader_entries == 1:
+            worksheet.write(row, column, i, cell_format)
+            worksheet.write(row, column + 1, student_number, cell_format)
+        else:
+            worksheet.merge_range(row, column,
+                                  row + reader_entries - 1, column,
+                                  i, cell_format)
+            worksheet.merge_range(row, column + 1,
+                                  row + reader_entries - 1, column + 1,
+                                  student_number, cell_format)
+        td_ist = timedelta(hours=5, minutes=30)  # time delta for UTC to IST conversion
+        for j in range(reader_entries):
+            attendance = student_all_attendance[j]
+            date_str = attendance.entry_datetime.strftime('%d-%m-%y(%a)')
+            time_entry = (attendance.entry_datetime + td_ist).strftime("%I:%M:%S %p")
+            time_exit = (attendance.exit_datetime + td_ist).strftime("%I:%M:%S %p")
+            td = attendance.exit_datetime - attendance.entry_datetime
+            timespent = day_hour_minute_seconds(td)
+            worksheet.write(row+j, column + 2, date_str, cell_format)
+            worksheet.write(row+j, column + 3, time_entry, cell_format)
+            worksheet.write(row+j, column + 4, time_exit, cell_format)
+            worksheet.write(row+j, column + 5, timespent, cell_format)
+        row += (j+1)
+        i += 1
+    workbook1.close()
+
+
 
 
 def day_hour_minute_seconds(td):
@@ -259,7 +351,7 @@ def day_hour_minute_seconds(td):
 
     seconds = td.seconds % 60
     if seconds:
-        seconds_str = "{} second{}".format(seconds, "" if days == 1 else "s")
+        seconds_str = "{} second{}".format(seconds, "" if seconds == 1 else "s")
     else:
         seconds_str = ""
 
