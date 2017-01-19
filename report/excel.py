@@ -314,7 +314,7 @@ def true_reader_details(month, year, output=None):
             time_entry = (attendance.entry_datetime + td_ist).strftime("%I:%M:%S %p")
             time_exit = (attendance.exit_datetime + td_ist).strftime("%I:%M:%S %p")
             # time delta of current session
-            if attendance.entry_time() >= time(16, 0, 0):
+            if attendance.entry_time >= time(16, 0, 0):
                 reader_td = attendance.exit_datetime - attendance.entry_datetime
             else:
                 reader_td = attendance.exit_datetime - in_tz.localize(
