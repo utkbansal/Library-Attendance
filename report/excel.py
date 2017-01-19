@@ -290,7 +290,7 @@ def true_reader_details(month, year, output=None):
                                                            )
         # filtering the entries after 4 p.m IST
         student_all_attendance = student_all_attendance.filter(
-            entry_time__gte=time(10, 30, 0),
+            exit_time__gte=time(10, 30, 0),
             exit_time__lte=time(18, 30, 0)
         )
 
