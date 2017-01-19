@@ -81,9 +81,9 @@ class TrueReaderFormView(GroupRequiredMixin, FormView):
         true_reader(year=year, month=month, output=output)
         output.seek(0)
         response = HttpResponse(
-                output.read(),
-                content_type="application/vnd.openxmlformats-offi"
-                             "cedocument.spreadsheetml.sheet")
+            output.read(),
+            content_type="application/vnd.openxmlformats-offi"
+                         "cedocument.spreadsheetml.sheet")
         response["Content-Disposition"] = ("attachment; filen"
                                            "ame=true_reader.xlsx")
         return response
@@ -104,6 +104,6 @@ class TrueReadeDetailView(GroupRequiredMixin, FormView):
             output.read(),
             content_type="application/vnd.openxmlformats-offi"
                          "cedocument.spreadsheetml.sheet")
-        response["Content-Disposition"] = ("attachment; filen"
-                                           "ame=true_reader_details.xlsx")
+        response["Content-Disposition"] = ("attachment; filename=true_reader_de"
+                                           "tails_month_{}_year_{}.xlsx".format(month, year))
         return response

@@ -306,19 +306,32 @@ def true_reader_details(month, year, output=None):
                                   row + reader_entries - 1, column + 1,
                                   student_number, cell_format)
         td_ist = timedelta(hours=5, minutes=30)  # time delta for UTC to IST conversion
+        reader_total_td = timedelta(0)  # total time delta of reader
+        in_tz = tz('Asia/Kolkata')
         for j in range(reader_entries):
             attendance = student_all_attendance[j]
             date_str = attendance.entry_datetime.strftime('%d-%m-%y(%a)')
             time_entry = (attendance.entry_datetime + td_ist).strftime("%I:%M:%S %p")
             time_exit = (attendance.exit_datetime + td_ist).strftime("%I:%M:%S %p")
-            td = attendance.exit_datetime - attendance.entry_datetime
-            timespent = day_hour_minute_seconds(td)
+            # time delta of current session
+            if attendance.entry_time >= time(10, 30, 0):
+                reader_td = attendance.exit_datetime - attendance.entry_datetime
+            else:
+                reader_td = attendance.exit_datetime - in_tz.localize(
+                    datetime.combine(attendance.entry_datetime.date(), time(16, 0, 0))
+                )
+            reader_total_td += reader_td
+            timespent = day_hour_minute_seconds(reader_td)
             worksheet.write(row+j, column + 2, date_str, cell_format)
             worksheet.write(row+j, column + 3, time_entry, cell_format)
             worksheet.write(row+j, column + 4, time_exit, cell_format)
             worksheet.write(row+j, column + 5, timespent, cell_format)
         row += (j+1)
         i += 1
+        worksheet.merge_range(row, column, row, column + 4, 'Total time spent', heading_format)
+        total_timespent = day_hour_minute_seconds(reader_total_td)
+        worksheet.write(row, column + 5, total_timespent, cell_format)
+        row += 1
     workbook1.close()
 
 
