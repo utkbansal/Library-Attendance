@@ -202,7 +202,7 @@ def true_reader(month, year, output=None):
         for student_attendance in student_attendances:
             if student_attendance.exit_time >= time(10, 30, 0):
                 date_set.add(student_attendance.exit_datetime.date())
-                if student_attendance.entry_time >= time(10, 30, 0):
+                if student_attendance.entry_time >= time(16, 0, 0):
                     td += (student_attendance.exit_datetime -
                            student_attendance.entry_datetime)
                 else:
@@ -314,7 +314,7 @@ def true_reader_details(month, year, output=None):
             time_entry = (attendance.entry_datetime + td_ist).strftime("%I:%M:%S %p")
             time_exit = (attendance.exit_datetime + td_ist).strftime("%I:%M:%S %p")
             # time delta of current session
-            if attendance.entry_time >= time(10, 30, 0):
+            if attendance.entry_time() >= time(16, 0, 0):
                 reader_td = attendance.exit_datetime - attendance.entry_datetime
             else:
                 reader_td = attendance.exit_datetime - in_tz.localize(
